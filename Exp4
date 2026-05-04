@@ -1,0 +1,156 @@
+Experiment 4                                                                                                                                                                                                   # --------------------------------------------------
+# Add Noise, Denoise Image and Compute PSNR
+# Libraries: OpenCV, NumPy, Matplotlib
+# --------------------------------------------------
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --------------------------------------------------
+# 1. READ IMAGE
+# --------------------------------------------------
+
+image_path = "/content/B3 (1).tif"   # Change image path here
+
+image = cv2.imread(image_path)
+
+if image is None:
+    raise FileNotFoundError("Image not found. Please check the image path.")
+
+print("Image Shape:", image.shape)
+
+# --------------------------------------------------
+# 2. PSNR FUNCTION
+# --------------------------------------------------
+
+def calculate_psnr(original, denoised):
+    mse = np.mean((original.astype(np.float32) - denoised.astype(np.float32)) ** 2)
+
+    if mse == 0:
+        return 100
+
+    psnr = 20 * np.log10(255.0 / np.sqrt(mse))
+    return psnr
+
+# --------------------------------------------------
+# 3. DISPLAY FUNCTION
+# --------------------------------------------------
+
+def display_images(original, noisy, denoised, title):
+    plt.figure(figsize=(15, 5))
+
+    plt.subplot(1, 3, 1)
+    plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
+    plt.title("Original Image")
+    plt.axis("off")
+
+    plt.subplot(1, 3, 2)
+    plt.imshow(cv2.cvtColor(noisy, cv2.COLOR_BGR2RGB))
+    plt.title(title + " Noisy Image")
+    plt.axis("off")
+
+    plt.subplot(1, 3, 3)
+    plt.imshow(cv2.cvtColor(denoised, cv2.COLOR_BGR2RGB))
+    plt.title(title + " Denoised Image")
+    plt.axis("off")
+
+    plt.show()
+
+# --------------------------------------------------
+# 4. RANDOM NOISE + AVERAGING FILTER
+# --------------------------------------------------
+
+random_noise = np.random.randint(0, 50, image.shape, dtype=np.uint8)
+
+random_noisy_image = cv2.add(image, random_noise)
+
+random_denoised = cv2.blur(random_noisy_image, (5, 5))
+
+psnr_random = calculate_psnr(image, random_denoised)
+
+display_images(image, random_noisy_image, random_denoised, "Random Noise")
+
+print(f"PSNR after Random Noise Denoising: {psnr_random:.2f} dB")
+
+# --------------------------------------------------
+# 5. GAUSSIAN NOISE + GAUSSIAN FILTER
+# --------------------------------------------------
+
+mean = 0
+stddev = 25
+
+gaussian_noise = np.random.normal(mean, stddev, image.shape).astype(np.float32)
+
+gaussian_noisy_image = image.astype(np.float32) + gaussian_noise
+gaussian_noisy_image = np.clip(gaussian_noisy_image, 0, 255).astype(np.uint8)
+
+gaussian_denoised = cv2.GaussianBlur(gaussian_noisy_image, (5, 5), 0)
+
+psnr_gaussian = calculate_psnr(image, gaussian_denoised)
+
+display_images(image, gaussian_noisy_image, gaussian_denoised, "Gaussian Noise")
+
+print(f"PSNR after Gaussian Noise Denoising: {psnr_gaussian:.2f} dB")
+
+# --------------------------------------------------
+# 6. SALT AND PEPPER NOISE + MEDIAN FILTER
+# --------------------------------------------------
+
+def add_salt_pepper_noise(img, salt_prob=0.05, pepper_prob=0.05):
+    noisy_img = img.copy()
+
+    total_pixels = img.shape[0] * img.shape[1]
+
+    num_salt = int(total_pixels * salt_prob)
+    num_pepper = int(total_pixels * pepper_prob)
+
+    # Add salt noise
+    y_coords = np.random.randint(0, img.shape[0], num_salt)
+    x_coords = np.random.randint(0, img.shape[1], num_salt)
+    noisy_img[y_coords, x_coords] = 255
+
+    # Add pepper noise
+    y_coords = np.random.randint(0, img.shape[0], num_pepper)
+    x_coords = np.random.randint(0, img.shape[1], num_pepper)
+    noisy_img[y_coords, x_coords] = 0
+
+    return noisy_img
+
+salt_pepper_noisy_image = add_salt_pepper_noise(image)
+
+salt_pepper_denoised = cv2.medianBlur(salt_pepper_noisy_image, 5)
+
+psnr_salt_pepper = calculate_psnr(image, salt_pepper_denoised)
+
+display_images(image, salt_pepper_noisy_image, salt_pepper_denoised, "Salt and Pepper Noise")
+
+print(f"PSNR after Salt and Pepper Noise Denoising: {psnr_salt_pepper:.2f} dB")
+
+# --------------------------------------------------
+# 7. SPECKLE NOISE + BILATERAL FILTER
+# --------------------------------------------------
+
+speckle_noise = np.random.randn(*image.shape).astype(np.float32)
+
+speckle_noisy_image = image.astype(np.float32) + image.astype(np.float32) * speckle_noise * 0.2
+speckle_noisy_image = np.clip(speckle_noisy_image, 0, 255).astype(np.uint8)
+
+# Bilateral filter is suitable for speckle noise because it reduces noise while preserving edges
+speckle_denoised = cv2.bilateralFilter(speckle_noisy_image, 9, 75, 75)
+
+psnr_speckle = calculate_psnr(image, speckle_denoised)
+
+display_images(image, speckle_noisy_image, speckle_denoised, "Speckle Noise")
+
+print(f"PSNR after Speckle Noise Denoising: {psnr_speckle:.2f} dB")
+
+# --------------------------------------------------
+# 8. FINAL PSNR COMPARISON
+# --------------------------------------------------
+
+print("\nFinal PSNR Values:")
+print(f"Random Noise      : {psnr_random:.2f} dB")
+print(f"Gaussian Noise    : {psnr_gaussian:.2f} dB")
+print(f"Salt Pepper Noise : {psnr_salt_pepper:.2f} dB")
+print(f"Speckle Noise     : {psnr_speckle:.2f} dB")
