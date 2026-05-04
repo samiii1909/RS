@@ -1,0 +1,71 @@
+## Import libraries
+import ee
+import geemap
+## Authenticate and Initialize ee
+ee.Authenticate()
+ee.Initialize(project='bright-antonym-495316-g5')
+## Add data to the map
+point = ee.Geometry.Point([-122.4439, 37.7538])
+
+image = (
+    ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
+    .filterBounds(point)
+    .filterDate("2023-01-01", "2023-12-31")
+    .sort("CLOUD_COVER")
+    .first()
+    .select(['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7'])
+)
+
+vis_params = {"min": 0, "max": 3000, "bands": ["SR_B5", "SR_B4", "SR_B3"]}
+
+Map = geemap.Map() # Initialize the Map object
+Map.centerObject(point, 8)
+Map.addLayer(image, vis_params, "Landsat-8")
+# The region is Map user_roi
+# region = ee.Geometry.Rectangle([-122.6003, 37.4831, -121.8036, 37.8288]) OR
+region = ee.Geometry.Point([-122.4439, 37.7538]).buffer(10000)
+
+# Make the training dataset.
+training = image.sample(
+    **{
+        #'region': region,
+        "scale": 30,
+        "numPixels": 5000,
+        "seed": 0,
+        "geometries": True,  # Set this to False to ignore geometries
+    }
+)
+
+Map.addLayer(training, {}, "training", False)
+Map
+# Instantiate the clusterer and train it.
+n_clusters = 5
+clusterer = ee.Clusterer.wekaKMeans(n_clusters).train(training)
+
+# Cluster the input using the trained clusterer.
+result = image.cluster(clusterer)
+# # Display the clusters with random colors.
+Map.addLayer(result.randomVisualizer(), {}, "clusters")
+Map
+
+#This part is no imoprt
+
+#Download the classification result 
+import os
+
+# Define a directory that exists
+out_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+# If the directory doesn't exist, create it
+os.makedirs(out_dir, exist_ok=True)
+out_file = os.path.join(out_dir, "cluster.tif")
+
+geemap.ee_export_image(result, filename=out_file, scale=90)
+
+ #mount drive, if required
+
+#pip install rasterio (use if required)
+import rasterio as rio
+clusters1 = rio.open("........./cluster.tif") #specify path from your drive
+
+from rasterio.plot import show
+show(cluster)
