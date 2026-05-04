@@ -1,0 +1,27 @@
+import ee 
+ee.Authenticate() 
+ee.Initialize(project='bright-antonym-495316-g5') 
+import geemap.core as geemap 
+image = ee.Image('LANDSAT/LC08/C02/T1_TOA/LC08_044034_20140318')
+#MULTIPLICATION
+mult_sharp=image.select(['B4', 'B3', 'B2']).multiply(image.select([ 'B8']))
+#HSV
+hsv=image.select(['B4', 'B3', 'B2']).rgbToHsv()
+hsv_sharp=ee.Image.cat([
+hsv.select('hue'),
+hsv.select('saturation'),
+image.select('B8')
+]).hsvToRgb()
+#Simple Brovey method
+rgb=image.select(['B4', 'B3', 'B2'])
+rgb_sum=image.select('B4').add(image.select('B3')).add(image.select('B2'))
+rgb_sum=rgb_sum.where(rgb_sum.eq(0),0.0001)
+brovey_sharp=ee.Image.cat([
+image.select('B4').divide (rgb_sum).multiply(image.select('B8')), image.select('B3').divide (rgb_sum).multiply (image.select('B8')), image.select('B2').divide (rgb_sum).multiply (image.select('B8')) ]).rename(['B4', 'B3', 'B2'])
+#display
+Map=geemap.Map(center=[37.7664, -122.44829], zoom=13)
+Map.add_layer (image, {'bands': ['B4', 'B3', 'B2'], 'min': 0, 'max': 0.25}, 'Original RGB')
+Map.add_layer (mult_sharp, {'bands': ['B4', 'B3', 'B2'], 'min': 0, 'max' :0.05}, 'Multiply')
+Map.add_layer (hsv_sharp, {'min': 0, 'max':0.25}, 'HSV')
+Map.add_layer (brovey_sharp, {'bands': ['B4', 'B3', 'B2'], 'min': 0, 'max' :0.1}, 'Brovey')
+Map
