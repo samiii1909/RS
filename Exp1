@@ -1,0 +1,35 @@
+import pandas as pd
+import folium
+
+# Load dataset
+csv_path = "/content/list-of-airports-in-india-hxl-tags-1.csv"
+df = pd.read_csv(csv_path)
+
+# Convert latitude and longitude to numeric
+df['latitude_deg'] = pd.to_numeric(df['latitude_deg'], errors='coerce')
+df['longitude_deg'] = pd.to_numeric(df['longitude_deg'], errors='coerce')
+
+# Remove invalid rows
+df = df.dropna(subset=['latitude_deg', 'longitude_deg'])
+
+# Create base map
+center_lat = df['latitude_deg'].mean()
+center_lon = df['longitude_deg'].mean()
+
+m = folium.Map(location=[center_lat, center_lon], zoom_start=5)
+
+# Add POINT FEATURES using CircleMarker
+for index, row in df.iterrows():
+    folium.CircleMarker(
+        location=[row['latitude_deg'], row['longitude_deg']],
+        radius=5,                      # size of point
+        color='blue',                  # border color
+        fill=True,
+        fill_color='cyan',             # fill color
+        fill_opacity=0.7,
+        popup=row['name'],             # airport name
+        tooltip=row['name']            # hover text
+    ).add_to(m)
+
+# Display map
+m
