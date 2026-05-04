@@ -1,0 +1,158 @@
+# Import required libraries
+import os
+import rasterio
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --------------------------------------------------
+# 1. GIVE PATHS OF LANDSAT BANDS
+# --------------------------------------------------
+
+blue_path = "/content/LC09_L2SP_010001_20260430_20260501_02_T2_SR_B2.TIF"
+green_path = "/content/LC09_L2SP_010001_20260430_20260501_02_T2_SR_B3.TIF"
+red_path = "/content/LC09_L2SP_010001_20260430_20260501_02_T2_SR_B4.TIF"
+nir_path = "/content/LC09_L2SP_010001_20260430_20260501_02_T2_SR_B5.TIF"
+
+band_paths = [blue_path, green_path, red_path, nir_path]
+band_names = ["Blue Band", "Green Band", "Red Band", "NIR Band"]
+
+# --------------------------------------------------
+# 2. CHECK WHETHER FILES EXIST OR NOT
+# --------------------------------------------------
+
+for path in band_paths:
+    if not os.path.exists(path):
+        print("File not found:", path)
+        raise FileNotFoundError("Please upload the correct file in Colab.")
+
+print("All files found successfully.")
+
+# --------------------------------------------------
+# 3. READ BANDS SAFELY
+# --------------------------------------------------
+
+band_data = []
+
+for path in band_paths:
+    with rasterio.open(path) as src:
+        band = src.read(1).astype("float32")
+
+        # Replace nodata values with NaN
+        if src.nodata is not None:
+            band[band == src.nodata] = np.nan
+
+        band_data.append(band)
+
+        print("Band path:", path)
+        print("Shape:", band.shape)
+        print("Min:", np.nanmin(band), "Max:", np.nanmax(band))
+        print("--------------------------------")
+
+# --------------------------------------------------
+# 4. CHECK SAME SHAPE
+# --------------------------------------------------
+
+shapes = [band.shape for band in band_data]
+
+if len(set(shapes)) != 1:
+    raise ValueError("All bands do not have the same shape. Use bands from the same Landsat scene.")
+
+# Convert list to stacked array
+band_stack = np.array(band_data)
+
+print("Stacked array length:", len(band_stack))
+print("Stacked array shape:", band_stack.shape)
+print("Stacked array Min:", np.nanmin(band_stack))
+print("Stacked array Max:", np.nanmax(band_stack))
+
+blue = band_stack[0]
+green = band_stack[1]
+red = band_stack[2]
+nir = band_stack[3]
+
+# --------------------------------------------------
+# 5. FUNCTION FOR DISPLAY NORMALIZATION
+# --------------------------------------------------
+
+def normalize_band(band):
+    band_min = np.nanpercentile(band, 2)
+    band_max = np.nanpercentile(band, 98)
+
+    norm = (band - band_min) / (band_max - band_min)
+    norm = np.clip(norm, 0, 1)
+
+    return norm
+
+# --------------------------------------------------
+# 6. VISUALIZE INDIVIDUAL BANDS
+# --------------------------------------------------
+
+fig, axes = plt.subplots(1, 4, figsize=(16, 5))
+
+for i in range(4):
+    axes[i].imshow(normalize_band(band_stack[i]), cmap="gray")
+    axes[i].set_title(band_names[i])
+    axes[i].axis("off")
+
+plt.tight_layout()
+plt.show()
+
+# --------------------------------------------------
+# 7. TRUE COLOR COMPOSITE
+# True Color = Red, Green, Blue
+# --------------------------------------------------
+
+red_norm = normalize_band(red)
+green_norm = normalize_band(green)
+blue_norm = normalize_band(blue)
+
+rgb = np.dstack((red_norm, green_norm, blue_norm))
+
+plt.figure(figsize=(8, 8))
+plt.imshow(rgb)
+plt.title("True Color Composite Raster")
+plt.axis("off")
+plt.show()
+
+# --------------------------------------------------
+# 8. FALSE COLOR COMPOSITE
+# False Color = NIR, Red, Green
+# --------------------------------------------------
+
+nir_norm = normalize_band(nir)
+
+false_color = np.dstack((nir_norm, red_norm, green_norm))
+
+plt.figure(figsize=(8, 8))
+plt.imshow(false_color)
+plt.title("False Color Composite Raster")
+plt.axis("off")
+plt.show()
+
+# --------------------------------------------------
+# 9. HISTOGRAMS OF ALL BANDS
+# --------------------------------------------------
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+hist_bands = [blue, green, red, nir]
+hist_titles = [
+    "Histogram of Blue Band",
+    "Histogram of Green Band",
+    "Histogram of Red Band",
+    "Histogram of NIR Band"
+]
+
+for i, ax in enumerate(axes.flat):
+    data = hist_bands[i]
+    data = data[~np.isnan(data)]
+
+    ax.hist(data.flatten(), bins=50)
+    ax.set_title(hist_titles[i])
+    ax.set_xlabel("Pixel Value")
+    ax.set_ylabel("Frequency")
+
+plt.tight_layout()
+plt.show()
+
+print("Program executed successfully.")
