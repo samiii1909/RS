@@ -1,0 +1,136 @@
+Experiment 3                                                                                                                                                                                                      # --------------------------------------------------
+# NDVI and NDWI Calculation using Python
+# Libraries: rasterio, numpy, matplotlib
+# --------------------------------------------------
+
+import os
+import rasterio as rio
+import numpy as np
+import matplotlib.pyplot as plt
+from rasterio.plot import show
+
+# --------------------------------------------------
+# 1. GIVE INPUT FILE PATHS
+# --------------------------------------------------
+
+# Part (a): MODIS / LISS3 bands for NDVI
+modis_nir_path = "/content/MODIS_18Dec17_NIR (1).tif"
+modis_red_path = "/content/MODIS_18Dec17_RED (1).tif"
+
+# Part (b): Landsat 8 bands for NDWI
+landsat_b3_path = "/content/B3 (1).tif"   # Green band
+landsat_b5_path = "/content/B5 (1).tif"   # NIR band
+
+# Output files
+ndvi_output = "/content/NDVI_Output.tif"
+ndwi_output = "/content/NDWI_Output.tif"
+
+# --------------------------------------------------
+# 2. FUNCTION TO CHECK FILES
+# --------------------------------------------------
+
+def check_file(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"File not found: {path}")
+    else:
+        print("File found:", path)
+
+check_file(modis_nir_path)
+check_file(modis_red_path)
+check_file(landsat_b3_path)
+check_file(landsat_b5_path)
+
+# --------------------------------------------------
+# 3. FUNCTION TO READ RASTER BAND
+# --------------------------------------------------
+
+def read_band(path):
+    src = rio.open(path)
+    band = src.read(1).astype("float32")
+
+    if src.nodata is not None:
+        band[band == src.nodata] = np.nan
+
+    return src, band
+
+# --------------------------------------------------
+# 4. FUNCTION TO SAVE OUTPUT RASTER
+# --------------------------------------------------
+
+def save_raster(output_path, reference_src, data):
+    profile = reference_src.profile
+    profile.update(
+        dtype=rio.float32,
+        count=1,
+        nodata=-9999
+    )
+
+    output_data = np.where(np.isnan(data), -9999, data).astype("float32")
+
+    with rio.open(output_path, "w", **profile) as dst:
+        dst.write(output_data, 1)
+
+    print("Raster saved successfully:", output_path)
+
+# --------------------------------------------------
+# PART (A): CALCULATE NDVI
+# Formula: NDVI = (NIR - RED) / (NIR + RED)
+# --------------------------------------------------
+
+nir_src, nir = read_band(modis_nir_path)
+red_src, red = read_band(modis_red_path)
+
+if nir.shape != red.shape:
+    raise ValueError("NIR and RED bands do not have same shape.")
+
+ndvi = np.where(
+    (nir + red) == 0,
+    np.nan,
+    (nir - red) / (nir + red)
+)
+
+print("NDVI calculated successfully.")
+print("NDVI Min:", np.nanmin(ndvi))
+print("NDVI Max:", np.nanmax(ndvi))
+
+save_raster(ndvi_output, nir_src, ndvi)
+
+# Display NDVI
+plt.figure(figsize=(8, 6))
+plt.imshow(ndvi, cmap="RdYlGn")
+plt.colorbar(label="NDVI Value")
+plt.title("NDVI Band")
+plt.axis("off")
+plt.show()
+
+# --------------------------------------------------
+# PART (B): CALCULATE NDWI
+# Formula: NDWI = (GREEN - NIR) / (GREEN + NIR)
+# Landsat 8: B3 = Green, B5 = NIR
+# --------------------------------------------------
+
+b3_src, green = read_band(landsat_b3_path)
+b5_src, landsat_nir = read_band(landsat_b5_path)
+
+if green.shape != landsat_nir.shape:
+    raise ValueError("B3 and B5 bands do not have same shape.")
+
+ndwi = np.where(
+    (green + landsat_nir) == 0,
+    np.nan,
+    (green - landsat_nir) / (green + landsat_nir)
+)
+
+print("NDWI calculated successfully.")
+print("NDWI Min:", np.nanmin(ndwi))
+print("NDWI Max:", np.nanmax(ndwi))
+
+save_raster(ndwi_output, b3_src, ndwi)
+
+# Display NDWI
+plt.figure(figsize=(8, 6))
+plt.imshow(ndwi, cmap="viridis")
+plt.colorbar(label="NDWI Value")
+plt.title("NDWI Band")
+plt.axis("off")
+plt.show()
