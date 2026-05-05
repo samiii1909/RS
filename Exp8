@@ -3,7 +3,7 @@ import ee
 import geemap
 ## Authenticate and Initialize ee
 ee.Authenticate()
-ee.Initialize(project='bright-antonym-495316-g5')
+ee.Initialize(project='bright-antonym-495316-g5')    //dulcet-coast-492103-d8(sam), bamboo-theorem-494114-d9(kasu)
 ## Add data to the map
 point = ee.Geometry.Point([-122.4439, 37.7538])
 
