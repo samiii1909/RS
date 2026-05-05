@@ -25,3 +25,93 @@ Map.add_layer (mult_sharp, {'bands': ['B4', 'B3', 'B2'], 'min': 0, 'max' :0.05},
 Map.add_layer (hsv_sharp, {'min': 0, 'max':0.25}, 'HSV')
 Map.add_layer (brovey_sharp, {'bands': ['B4', 'B3', 'B2'], 'min': 0, 'max' :0.1}, 'Brovey')
 Map
+
+
+
+EXPERIMENT NO. 6 
+ 
+●	Title: Implement pan-sharpening algorithm on satellite images 
+●	Procedure:  
+●	(a)  Perform pansharpening in QGIS. [Download Landsat 8 data (level 2) for any location or consider earlier downloaded data. Create composite of B4,B3,B2 using build virtual raster ->  select Pansharpening option under GDAL ->Raster Miscellaneous  -> add spectral composite and panchromatic (band8) ->Run]  
+Steps (USGS EarthExplorer): 
+●	Go to EarthExplorer 
+●	Select location (map or coordinates) 
+●	Go to Data Sets → Landsat → Landsat 8-9 OLI/TIRS Level-1 
+●	ONLY DOWNLOAD THESE FILES 
+●	From your list, you need ONLY these 4 bands: ● 	..._SR_B2.TIF → Blue 
+●	..._SR_B3.TIF → Green 
+●	..._SR_B4.TIF → Red 
+●	..._B8.TIF → Panchromatic (IMPORTANT) 
+●	Click Results 
+●	Download the scene (Level-1) 
+PART 1: Open QGIS 
+1.	Launch QGIS 
+2.	You’ll see: 
+○ 	Left: Layers panel 
+○ 	Center: Map canvas 
+PART 2: Load Bands into QGIS 
+Method: 
+1.	Go to Layer → Add Layer → Add Raster Layer 
+2.	Select: 
+○ 	B2 
+○ 	B3 
+○ 	B4 
+○ 	B8 
+3. 	Click Add 
+All bands appear as grayscale images 
+PART 3: Create Virtual Raster Now follow your assignment exactly: 
+Steps: 
+1.	Go to: 
+ Raster → Miscellaneous → Build Virtual Raster (VRT) 
+2.	In the window: 
+○ 	Input layers → Select: 
+■ 	B4 
+■ 	B3 
+■ 	B2 
+3. 	Check: 
+○ 	✔ Place each input file into a separate band 
+4. 	Click Run 
+ Output = RGB composite raster 
+PART 4: Perform Pansharpening 
+Now the main step: 
+Steps: 
+●	Go to: 
+ Raster → Miscellaneous → Pansharpening 
+●	In dialog box: 
+○ 	Spectral bands → Select your VRT (RGB composite) 
+■ 	Steps: 
+○ 	Look at the Layers panel (left side) ○ 	You’ll see something like: 
+■ 	Virtual Raster ■ 	or Output VRT 
+○ 	Click that layer once (to select it) 
+○ 	Now open: 
+ Processing → Toolbox → Pansharpening 
+○ 	In Spectral dataset field: 
+■ 	Click the dropdown (small arrow) 
+■ 	Select the VRT layer name 
+○ 	✔ Done 
+○ 	Panchromatic band → Select Band 8 
+● 	Choose method:(if there is no this option than run as it is) 
+○ 	Try: 
+■ 	Brovey (simple) 
+■ 	or IHS (better quality) ● 	Output file: 
+○ 	Give name like: 
+ pansharpened.tif 
+● 	Click Run 
+PART 5: View Result 
+You’ll see: 
+● 	Sharper image than original RGB 
+● Better spatial resolution PART 6: Compare Before vs After 
+You can: 
+●	Toggle layers ON/OFF 
+●	Zoom in 
+You’ll clearly see: 
+●	Original → blurry 
+●	Pansharpened → sharper 
+PART 7: Save Final Output 
+1.	Right-click pansharpened layer 
+2.	Click: 
+ Export → Save As 
+3.	Choose: 
+○ 	Format: GeoTIFF 
+○ 	Location: Your folder 
+
