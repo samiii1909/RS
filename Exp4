@@ -154,3 +154,66 @@ print(f"Random Noise      : {psnr_random:.2f} dB")
 print(f"Gaussian Noise    : {psnr_gaussian:.2f} dB")
 print(f"Salt Pepper Noise : {psnr_salt_pepper:.2f} dB")
 print(f"Speckle Noise     : {psnr_speckle:.2f} dB")
+
+
+
+EXPERIMENT NO. 4 
+ 
+ Implement image denoising in QGIS (apply various filters).  
+Step 1: Load Satellite Image 
+1.	Open QGIS. 
+2.	Go to: 
+ Layer → Add Layer → Add Raster Layer 3. 	Select the raster image (e.g., Landsat B4 band). 
+4. 	Click Add. 
+Step 2: Apply Contrast Enhancement (Pre-processing) 
+1.	Right-click the raster layer → Properties. 
+2.	Go to Symbology. 
+3.	Set: 
+○ 	Render type → Singleband gray ○ 	Contrast enhancement → Stretch to MinMax 
+4.	Expand Min/Max Value Settings: ○ 	Set Cumulative count cut = 2% – 98% 
+5.	Click Apply → OK. 
+Step 3: Apply Gaussian Filter (Denoising) 
+1.	Go to: 
+ Processing → Toolbox 
+2.	Search: 
+ Gaussian filter 
+3.	Select the tool. 
+4.	Set: 
+○ 	Input layer → raster image 
+○ 	Radius → 3 
+5.	Specify output file name: 
+ gaussian_denoised.tif 
+6.	Click Run. 
+Step 4: Apply Mean (Smoothing) Filter 
+1.	Open Processing Toolbox. 
+2.	Search: 
+ Mean filter / Smoothing filter 
+3.	Select input raster. 
+4.	Set kernel size: 
+ 3 × 3 
+5.	Save output as: 
+ mean_denoised.tif 
+6.	Click Run. 
+Step 5: Apply Median Filter 
+1.	In Processing Toolbox, search: 
+ Median filter 
+2.	Select input raster. 
+3.	Set kernel size: 
+ 3 × 3 
+4.	Save output as: 
+ median_denoised.tif 
+5.	Click Run. 
+Step 6: Compare Results 
+1.	Turn ON/OFF layers in the Layers panel. 
+2.	Compare: 
+○ 	Original image 
+○ 	Gaussian filtered image 
+○ 	Mean filtered image 
+○ 	Median filtered image 
+○ 	Low-pass filtered image 
+3. 	Observe noise reduction and image smoothness. 
+Step 7: Save Final Output 
+1.	Right-click the best result layer. 
+2.	Click: 
+ Export → Save As 
+3.	Save as:  final_denoised_image.tif 
