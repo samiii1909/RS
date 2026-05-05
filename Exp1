@@ -34,3 +34,173 @@ for index, row in df.iterrows():
 # Display map
 m
 
+
+
+
+EXPERIMENT NO. 1 
+● 	Title: Introduction to QGIS software and spatial data –> Part (A)-I: To create a basic map and represent vector data features (point, line, polygon) on the map using QGIS, Part (A)-II: Read raster data and understand band composites (or virtual raster). 
+Part (B)-I: Create a thematic map. Part (B)-II: Write a raster file and create a raster band 
+Step 1: Download India Shapefile 
+Download from: 
+DIVA-GIS 
+Steps: 
+1.	Open: https://www.diva-gis.org/Data 
+2.	Click Country 
+3.	Select India 
+4.	Download: 
+IND_adm.zip 
+5.	Right-click ZIP → Extract All 
+Use file: 
+IND_adm1.shp   (India states) Step 2: Download Raster (.tif) 
+Download from: 
+Natural Earth 
+Download: 
+Natural Earth 1 Shaded Relief (.tif) 
+Extract ZIP. 
+Use: 
+NE1_50M_SR.tif 
+Part (A)-I: Create Basic Map & Vector Features 
+Step 3: Load India Map (Vector Data) 
+1.	Open QGIS 
+2.	Click: 
+Layer → Add Layer → Add Vector Layer 
+3.	Click Browse 
+4.	Select: 
+IND_adm1.shp 
+5.	Click Open 
+India map appears. 
+Step 4: Create Point Layer (Cities) 
+1.	Click: 
+Layer → Create Layer → New Shapefile Layer 
+2.	Set: 
+●	File Name → Cities 
+●	Geometry Type → Point 
+3.	Click OK 
+Now: 
+4.	Select Cities layer 
+5.	Click ✏ Toggle Editing 
+6.	Click 📍 Add Point Feature 
+7.	Click 3–5 places on map 
+8.	Click OK 
+9.	Click 💾 Save Edits 
+10.	Toggle Editing OFF - Point layer created. Step 5: Create Line Layer (Roads) 
+1.	Click: 
+Layer → Create Layer → New Shapefile Layer 
+2.	Set: 
+●	File Name → Roads 
+●	Geometry Type → Line 
+3.	Click OK 
+Now: 
+4.	Select Roads layer 
+5.	Toggle Editing 
+6.	Click 📏 Add Line Feature 
+7.	Draw 2–3 lines 
+8.	Right-click to finish 
+9.	Save Edits 
+10.	Toggle Editing OFF - Line layer created. Step 6: Create Polygon Layer (Regions) 
+1.	Click: 
+Layer → Create Layer → New Shapefile Layer 
+2.	Set: 
+●	File Name → Regions 
+●	Geometry Type → Polygon 
+3.	Click OK 
+Now: 
+4.	Select Regions layer 
+5.	Toggle Editing 
+6.	Click ⬛ Add Polygon 
+7.	Draw 1–2 polygons 
+8.	Right-click to finish 
+9.	Save Edits 
+10.	Toggle Editing OFF - Polygon created. Part (A)-II: Read Raster Data & Band Composite 
+Step 7: Load Raster File 
+1.	Click: 
+Layer → Add Layer → Add Raster Layer 
+2.	Select: 
+NE1_50M_SR.tif 
+3.	Click Open - Raster appears. 
+ 
+Step 8: Band Composite (If Available) 
+1.	Right-click raster layer 
+2.	Click: 
+Properties → Symbology 
+3.	If available: 
+Change: 
+Render Type → Multiband color Set: 
+●	Red → Band 3 
+●	Green → Band 2 
+●	Blue → Band 1 
+Click: 
+Apply → OK 
+If only Singleband gray appears → that's OK. - Screenshot required Part (B)-I: Create Thematic Map 
+Step 1: Open Attribute Table 
+1.	Right-click the shapefile layer. 
+2.	Click Open Attribute Table. 
+3.	Check the columns available in the table. 
+Step 2: Start Editing 
+4.	Click Toggle Editing pencil icon. 
+5.	Now the table becomes editable. 
+Step 3: Add New Field 
+6. 	Click New Field / Add Field icon. 7. 	Enter field name, for example: 
+○ 	Population 
+○ 	Area 
+○ 	Class 
+8. 	Select field type: 
+○ 	Text for Class 
+○ 	Integer for Population 
+○ 	Decimal for Area 
+9. 	Click OK. 
+Step 4: Fill Attribute Values 
+10.	Enter values in the new column. 
+11.	Example: 
+● 	Class: Urban, Forest, Water ● 	Population: 1000, 2000, 3000 
+12.	Click Save Edits. 
+13.	Turn off Toggle Editing. 
+Step 5: Create Thematic Map 
+14.	Right-click layer → Properties. 
+15.	Go to Symbology. 
+Step 6: For Categorized Map 
+16.	Change Single Symbol to Categorized. 
+17.	In Value, select text field, for example Class. 
+18.	Click Classify. 
+19.	Click Apply → OK. 
+Step 7: For Graduated Map 
+20.	Right-click layer → Properties → Symbology. 
+21.	Change Single Symbol to Graduated. 
+22.	In Value, select numeric field, for example Population or Area. 
+23.	Select color ramp. 
+24.	Click Classify. 
+25.	Click Apply → OK. 
+Step 8: Add Labels 
+26.	Right-click layer → Properties → Labels. 
+27.	Select Single Labels. 
+28.	Choose field, for example Name. 
+29.	Click Apply → OK. 
+Part (B)-II: Write Raster File 
+Steps to Run Python Code in QGIS 
+1.	Open QGIS. 
+2.	Open your project or create a New Project. 
+3.	Go to Plugins menu. 
+4.	Click Python Console. 
+5.	The Python Console will open at the bottom of QGIS. 
+6.	In the Python Console, click the Show Editor button. 
+7.	A script editor window will open. 
+8.	Copy your complete Python code. 
+9.	Paste the code into the script editor. 
+10.	Check that the raster file path in your code is correct. 
+11.	Make sure the raster file is present in that exact folder. 
+12.	Click the Run Script / Green Play button. 
+13.	Wait for the code to execute. 
+14.	Check the Python Console output for messages. 
+15.	If the raster loads successfully, it will appear in the Layers Panel. 
+16.	The raster image will also appear on the Map Canvas. 
+17.	If the raster has three or more bands, the RGB composite will be applied automatically. 
+18.	If the raster does not appear, check the file path and run the script again. 
+19.	After successful output, go to Project → Save. 
+20.	Save your QGIS project. 
+ 
+ 
+ 
+ 
+
+
+
