@@ -156,3 +156,65 @@ plt.tight_layout()
 plt.show()
 
 print("Program executed successfully.")
+
+
+
+
+EXPERIMENT NO. 2 
+●	Title: Band visualization, Creation of composite, Plot histogram. 
+●	Procedure:  
+●	(A) QGIS part: (i) Create an account at USGS Earth Explorer (for academic purpose) and download 
+Landsat 8 Collection 2 Level-2 data by selecting an area, (ii) Add Landsat 8 bands to QGIS as-> 
+Layer->Raster layer, (iii) Next, click, Raster->Miscellaneous->Build Virtual Raster (e.g. add Bands 4, 3, 2 as Input Layers, Tick for option->Place each input file to a separate band and Run, (iii) Save virtual raster created as NCC, (iv) Compute histogram from layer properties. (v) Repeat procedure for other band combinations. 
+1.	Open QGIS. 
+2.	Create a New Project. 
+3.	Go to:Layer → Add Layer → Add Raster Layer 
+4.	Click Browse. 
+5.	Select required bands, for example: 
+SR_B2.TIF 
+SR_B3.TIF 
+SR_B4.TIF 
+SR_B5.TIF 
+SR_B6.TIF 
+SR_B7.TIF 
+6.	Click Add. 
+7.	The bands will appear in the Layers Panel 
+  
+1.	Go to:Raster → Miscellaneous → Build Virtual Raster 
+2.	In Input layers, select: 
+SR_B4.TIF 
+SR_B3.TIF 
+SR_B2.TIF 
+3.	Tick: 
+Place each input file into a separate band 
+4.	In Output, click … 5. 	Select Save to File. 
+6.	Save the file as: NCC.vrt 
+7.	Click Run. 
+8.	Click Close. 
+ Display NCC Properly 
+1.	In the Layers Panel, right-click NCC.vrt. 
+2.	Click Properties. 
+3.	Go to Symbology. 
+4.	Set Render type as:Multiband color 
+5.	Set: 
+○ 	Red band → Band 1 
+○ 	Green band → Band 2 
+○ 	Blue band → Band 3 
+6. 	Click Apply → OK. 
+  
+  
+Plot Histogram 
+1.	Right-click any band or composite layer. 
+2.	Click Properties. 
+3.	Go to Histogram. 
+4.	Click Compute Histogram or Load Histogram. 
+5.	Observe the distribution of pixel values. 
+6.	Repeat for: 
+○ 	Individual bands 
+○ 	NCC 
+○ 	FCC 
+○ 	Other composites 
+Save Project 
+1.	Go to: Project → Save As 
+2.	Save your project with a suitable name, for example:Band_Visualization_Composite.qgz 
+
