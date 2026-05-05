@@ -134,3 +134,41 @@ plt.colorbar(label="NDWI Value")
 plt.title("NDWI Band")
 plt.axis("off")
 plt.show()
+
+
+
+
+EXPERIMENT NO. 3 
+●	Title: Calculate vegetation and water/ soil indices 
+●	Procedure: 
+●	1. Perform the NDVI and NDWI computation in QGIS using Raster Calculator.  
+●	Part (a) Calculate NDVI using the MODIS bands shared with you. (You can also use  LISS3 data's NIR & RED bands)  
+●	Part (b) Calculate NDWI using B3.tif and B5.tif, in QGIS. Both bands correspond to the Landsat 8 
+satellite image.  
+NDVI Calculation 
+1.	Open QGIS and create a new project. 
+2.	Go to Layer → Add Layer → Add Raster Layer and load the required bands (MODIS.RED, MODIS.NIR, 
+B3.tif, B5.tif). 
+3.	Open Raster → Raster Calculator. 
+4.	From the Raster Bands list, double-click the NIR band and Red band to form the NDVI expression. Don't add space in the formula. 
+[.("MODIS_18Dec17_NIR@1" - "MODIS_18Dec17_RED@1") / 
+("MODIS_18Dec17_NIR@1" + "MODIS_18Dec17_RED@1") ] 
+5.	Click the … (three dots) button next to the Output layer. 
+6.	Choose Save to File and name it NDVI.tif. 
+7.	Click OK to run the process. 
+8.	After the output is generated, right-click the NDVI layer → Properties → Symbology. 
+9.	Change render type to Singleband pseudocolor and apply a suitable color ramp.(Green for NDVI). 
+  
+NDWI Calculation(Same as NDVI) 
+1.	From the Raster Bands list, double-click the Green band (B3) and NIR band (B5). 
+  
+2.	Choose Save to File and name it NDWI.tif. 
+3.	Click OK to run the process. 
+4.	Select Singleband pseudocolor and apply an appropriate color ramp(Blue for NDWI) 
+  
+
+
+
+
+
+
