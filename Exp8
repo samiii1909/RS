@@ -48,6 +48,8 @@ result = image.cluster(clusterer)
 Map.addLayer(result.randomVisualizer(), {}, "clusters")
 Map
 
+
+
 #This part is no imoprt
 
 #Download the classification result 
@@ -60,6 +62,9 @@ os.makedirs(out_dir, exist_ok=True)
 out_file = os.path.join(out_dir, "cluster.tif")
 
 geemap.ee_export_image(result, filename=out_file, scale=90)
+
+
+
 
  #mount drive, if required
 
