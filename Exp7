@@ -3,7 +3,7 @@ import geemap
 
 
 ee.Authenticate()
-ee.Initialize(project='bright-antonym-495316-g5')
+ee.Initialize(project='bright-antonym-495316-g5')   //dulcet-coast-492103-d8(sam), bamboo-theorem-494114-d9(kasu)
 
 
 # Using reflective bands of Landsat 8
