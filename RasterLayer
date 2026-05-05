@@ -1,0 +1,45 @@
+from qgis.core import QgsRasterLayer, QgsProject, QgsMultiBandColorRenderer
+
+# 🔷 Step 1: Load raster
+raster_path = r"C:/Users/91928/Downloads/Remote Sensing/Exp1/NE1_LR_LC_SR/NE1_LR_LC_SR.tif"
+
+raster = QgsRasterLayer(raster_path, "Raster Layer")
+
+# 🔷 Step 2: Check validity
+if not raster.isValid():
+    print("❌ Raster failed to load! Check path or file.")
+else:
+    QgsProject.instance().addMapLayer(raster)
+    print("✅ Raster loaded successfully!")
+
+    # 🔷 Step 3: Band count
+    band_count = raster.bandCount()
+    print("Number of bands:", band_count)
+
+    # 🔷 Step 4: Apply Band Composite
+    if band_count >= 3:
+        provider = raster.dataProvider()
+
+        # 🔷 RGB Composite (default)
+        red_band = 1
+        green_band = 2
+        blue_band = 3
+
+        renderer = QgsMultiBandColorRenderer(
+            provider,
+            red_band,
+            green_band,
+            blue_band
+        )
+
+        raster.setRenderer(renderer)
+        raster.triggerRepaint()
+
+        print("🎨 RGB Band Composite Applied!")
+
+        # 🔷 Optional: Print band info
+        for i in range(1, band_count + 1):
+            print(f"Band {i} ready")
+
+    else:
+        print("⚠️ Not enough bands for composite!")
